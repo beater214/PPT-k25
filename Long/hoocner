@@ -1,0 +1,127 @@
+#include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
+
+const int N = 1e3 + 5;
+int n;
+double c, a[N], b[N];
+
+double hoocne(double a[], int n, double c){
+    double p = a[0];
+    for (int i = 1; i <= n; i++) {
+        p = p * c + a[i];
+    }
+    return p;
+}
+void hoocnetq(double a[],double b[],int n,double c){
+	double p = 1;
+	for(int i = 0; i <= n; i++) b[i] = a[i];
+	for(int i = n; i >= 1; i--){
+		p = b[0];
+		for(int j = 1;j<=i;j++){
+			p = p*c + b[j];
+			b[j] = p;
+		}
+	}
+}
+
+void inputC() {
+	printf("Nhap gia tri c: ");
+    if (scanf("%lf", &c) != 1) {
+        printf("c khong hop le!\n");
+        exit(1);
+    }
+}
+
+void input() {
+	printf("Nhap bac da thuc cua ham p(x): ");
+    if (scanf("%d", &n) != 1) {
+        printf("Bac da thuc phai la so nguyen\n");
+    	exit(1);
+    }
+    if (n <= 0) {
+        printf("Bac da thuc n phai lon hon 0\n");
+        exit(1);
+    }
+    printf("Nhap %d he so (tu bac cao nhat den bac 0): ", n + 1);
+    for (int i = 0; i <= n; i++) {
+        if (scanf("%lf", &a[i]) != 1) {
+            printf("Loi: he so a[%d] khong hop le!\n", i);
+            exit(1);
+        }
+        if (i == 0 && fabs(a[0]) < 1e-9) {
+            printf("a[0] phai khac 0\n");
+            exit(1);
+        }
+    }
+    inputC();
+}
+void output(double b[], int n, double c){
+	printf("p(y ");
+	if (c < 0) printf("- "), c = -c;
+	else printf("+ ");
+	printf("%g): ", c);
+	int zr = 1;
+	for (int i = 0; i <= n; i++){
+		zr &= (b[i] == 0);
+	}
+    if (zr) {
+    	printf(0);
+    	return;
+	}
+    for (int i = 0; i <= n; i++) {
+        int po = n - i; 
+        double heso = fabs(b[i]);
+        if (b[i] == 0) continue;
+        if (i > 0 && b[i] > 0) printf(" + ");
+        else if (b[i] < 0) printf(" - ");
+        
+        if (heso != 1) printf("%g", heso);
+        if (po > 0) printf("y");
+        if (po > 1) printf("^%d", po);
+        
+//        if (po == 0)  printf("%.2lf", heso);
+//        else if (po == 1) printf("%.2lfy", heso);
+//        else   printf("%.2lfy^%d", heso, bac);
+    }
+    printf("\n");
+}
+
+void menu() {
+	printf("\nTinh Gia Tri Cua Ham Bang PP Hoocner\n");
+	printf("1. Tinh p(c)\n");
+	printf("2. Xac dinh da thuc p(y + c)\n");
+	printf("3. Nhap gia tri c khac\n");
+	printf("4. Nhap da thuc khac\n");
+	printf("0. Thoat\n");
+}
+
+int main() {
+    input();
+	menu();
+    while(1){
+    	int lc;
+    	printf("Nhap lua chon: ");
+    	if (scanf("%d",&lc) != 1 || lc < 0 || lc > 4) {
+    		printf("Lua chon khong hop le\n");
+    		fflush(stdin);
+		}
+		if (lc == 0) break;
+		
+		printf("\n");
+    	if(lc == 1){
+    		double res = hoocne(a, n, c);
+    		printf("P(%g) = %g\n",c, res);
+    	}
+    	else if(lc == 2){
+    		hoocnetq(a,b,n,c);
+    		output(b,n,c);
+    	}
+    	else if (lc == 3) {
+    		inputC();
+		} else if (lc == 4) {
+			input();
+		}
+    }
+    return 0;
+}
